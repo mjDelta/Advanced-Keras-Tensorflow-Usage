@@ -26,14 +26,36 @@ def unpool2(pool,indexs,ksize=2,stride=2,padding='SAME'):
           unpool = unpool + diff_matrix
   unpool=tf.transpose(unpool,perm=[0,3,2,1])
   return unpool
+def unpool(pool, ind, ksize=(1, 2, 2, 1), scope='unpool'):
+    """
+       Unpooling layer after max_pool_with_argmax.
+       Args:
+           pool:   max pooled output tensor
+           ind:      argmax indices (produced by tf.nn.max_pool_with_argmax)
+           ksize:     ksize is the same as for the pool
+       Return:
+           unpooled:    unpooling tensor
+    """
+    with tf.variable_scope(scope):
+        pooled_shape = pool.get_shape().as_list()
 
+        flatten_ind = tf.reshape(ind, (pooled_shape[0], pooled_shape[1] * pooled_shape[2] * pooled_shape[3]))
+        # sparse indices to dense ones_like matrics
+        one_hot_ind = tf.one_hot(flatten_ind,  pooled_shape[1] * ksize[1] * pooled_shape[2] * ksize[2] * pooled_shape[3], on_value=1., off_value=0., axis=-1)
+        one_hot_ind = tf.reduce_sum(one_hot_ind, axis=1)
+        one_like_mask = tf.reshape(one_hot_ind, (pooled_shape[0], pooled_shape[1] * ksize[1], pooled_shape[2] * ksize[2], pooled_shape[3]))
+        # resize input array to the output size by nearest neighbor
+        img = tf.image.resize_nearest_neighbor(pool, [pooled_shape[1] * ksize[1], pooled_shape[2] * ksize[2]])
+        unpooled = tf.multiply(img, tf.cast(one_like_mask, img.dtype))
+        return unpooled
+      
 def max_pool(inp,ksize=[1,2,2,1],strides=[1,2,2,1],padding="SAME"):
   return tf.nn.max_pool_with_argmax(inp,ksize,strides,padding)
   
 test_tensor=tf.placeholder(dtype=tf.float32,shape=[1,4,4,1])
 pool,indices=max_pool(test_tensor)
 
-out=unpool2(pool,indices)
+out=unpool(pool,indices)
 
 s=time.time()
 for i in range(1):
