@@ -64,3 +64,28 @@ test_y_true = test_y[test_x > 0]
 
 print('\n---- Result of CRF ----\n')
 classification_report(test_y_true, test_y_pred, class_labels)
+
+# -------------
+# 2. BiLSTM-CRF
+# -------------
+
+print('==== training BiLSTM-CRF ====')
+
+model = Sequential()
+model.add(Embedding(len(vocab), EMBED_DIM, mask_zero=True))  # Random embedding
+model.add(Bidirectional(LSTM(BiRNN_UNITS // 2, return_sequences=True)))
+crf = CRF(len(class_labels), sparse_target=True)
+model.add(crf)
+model.summary()
+
+model.compile('adam', loss=crf.loss_function, metrics=[crf.accuracy])
+model.fit(train_x, train_y, epochs=EPOCHS, validation_data=[test_x, test_y])
+
+model.save(save_path)
+model.load_weights(save_path)
+
+test_y_pred = model.predict(test_x).argmax(-1)[test_x > 0]
+test_y_true = test_y[test_x > 0]
+
+print('\n---- Result of BiLSTM-CRF ----\n')
+classification_report(test_y_true, test_y_pred, class_labels)
