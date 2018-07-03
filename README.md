@@ -7,6 +7,8 @@ Use the `many-to-many` structure in RNN to complete the addition of two numbers.
 3.<a href="https://github.com/mjDelta/Advanced-Keras-Usage/blob/master/unpooling.py">unpooling</a></br>
 Unpooling is a popular method in the semantic segmentation task to segment not so-clearly border between objects. It works like below.</br>
 ![Image text](https://github.com/mjDelta/Advanced-Keras-Tensorflow-Usage/blob/master/imgs/unpooling.png)</br>
-4.<a href="https://github.com/mjDelta/Advanced-Keras-Tensorflow-Usage/blob/master/crf.py">crf</a></br>
-CRF belongs to the sequence family, considering "neighboring" smaples, as well as the full context.</br>
+4.<a href="https://github.com/mjDelta/Advanced-Keras-Tensorflow-Usage/blob/master/crf_text.py">crf_text</a></br>
+CRF belongs to the sequence family, considering "neighboring" smaples, as well as the full context, using it ```keras_contrib.layers.CRF```</br>
+4.<a href="https://github.com/mjDelta/Advanced-Keras-Tensorflow-Usage/blob/master/crf_img_unary.py">crf_img_unary</a></br>
+CRF belongs to the sequence family, considering "neighboring" smaples, as well as the full context, using it ```pydensecrf```</br>
 
